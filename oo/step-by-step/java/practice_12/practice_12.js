@@ -55,6 +55,7 @@ class Student extends Person{
     constructor(id,name,age,klass = {}){
         super(id,name,age);
         this.klass = klass;
+        this.klass.appendMember(this);
     }
     introduce() {
         return super.introduce()+`I am at Class ${this.klass.number}`;
@@ -72,10 +73,7 @@ class Teacher extends Person{
         return message;
     }
     isTeaching(student){
-        let message = 0;
-        this.klasses.map(function (klass) {
-            message = message || klass.isIn(student);
-        });
+        let message = this.klasses.some((klass) => {return klass.isIn(student);});
         if(message){
             message += '\n'+`I am ${this.name}.I know ${student.name} has join Class ${student.klass.number}.`;
             if(student.klass.leader === student){
@@ -89,7 +87,7 @@ var klass1 = new Klass(1);
 var klass2 = new Klass(2);
 var klass3 = new Klass(3);
 var Tom = new Student(22,"Tom",13,klass2);
-klass2.appendMember(Tom);
+//klass2.appendMember(Tom);
 klass2.assignLeader(Tom);
 var Sara = new Teacher(4,"Sara",35,[klass1,klass2]);
 console.log(Sara.isTeaching(Tom));

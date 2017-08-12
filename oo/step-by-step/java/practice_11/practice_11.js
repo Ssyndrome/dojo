@@ -24,13 +24,13 @@ class Person{
 class Klass{
     constructor(number){
         this.number = number;
-        Klass.members = [];
+            this.members = [];
     }
     NUMBER(){
         return this.number;
     }
     assignLeader(student) {
-        if(Klass.members.includes(student)){
+        if(this.members.includes(student)){
             student.introduce = function () {
                 return `My name is ${this.name}.I am ${this.age} years old.I am a Student.I am a Leader of Class ${student.klass.number}.`;
             };
@@ -41,7 +41,7 @@ class Klass{
 
     }
     appendMember(student) {
-        Klass.members.push(student);
+        this.members.push(student);
     }
     isIn(student){
         if(Klass.members.includes(student)){
@@ -55,9 +55,10 @@ class Student extends Person{
     constructor(id,name,age,klass = {}){
         super(id,name,age);
         this.klass = klass;
+        this.klass.appendMember(this);
     }
     introduce() {
-        return super.introduce()+`I am at Class ${this.klass.number}`;
+        return super.introduce()+`I am at Class ${this.klass.number}.`;
     }
 }
 
@@ -72,21 +73,11 @@ class Teacher extends Person{
         return message;
     }
     isTeaching(student){
-        let message = 0;
-        this.klasses.map(function (klass) {
-            message = message || klass.isIn(student);
-        });
-        if(message){
-            message += '\n'+`I am ${this.name}.I know ${student.name} has join Class ${student.klass.number}.`;
-            if(student.klass.leader === student){
-                message += '\n'+`I know ${student.name} become Leader of Class ${student.klass.number}.`;
-            }
-        }
-        return message;
+        return this.klasses.some((klass) => {return klass.isIn(student);});
     }
 }
 var klass1 = new Klass(1);
 var klass2 = new Klass(2);
-var Tom = new Student(22,"Tom",13);
-var Sara = new Teacher(4,"Sara",35,[klass1,klass2]);
-console.log(Sara.isTeaching(Tom));
+var Tom = new Student(22,"Tom",13,klass1);
+klass2.appendMember(Tom);
+console.log(Tom.introduce());
